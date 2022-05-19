@@ -22,5 +22,15 @@
     "rollup-plugin-terser": "^7.0.0",
     "sirv-cli": "^2.0.0",
     "svelte": "^3.0.0"
+  },
+  "dependencies": {
+    "@egjs/hammerjs": "^2.0.17",
+    "component-emitter": "^1.3.0",
+    "keycharm": "^0.4.0",
+    "timsort": "^0.3.0",
+    "uuid": "^8.3.2",
+    "vis-data": "^7.1.4",
+    "vis-network": "^9.1.2",
+    "vis-util": "^5.0.3"
   }
 }

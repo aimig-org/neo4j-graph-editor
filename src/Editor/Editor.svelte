@@ -3,6 +3,7 @@ import CypherInput from "./CypherInput.svelte";
 import Graph from './Graph.svelte';
 import Properties from "./Properties.svelte";
 
+let selectedNodeId = 0;
 let cypher = 'MATCH(n) RETURN(n)';
 </script>
 
@@ -13,11 +14,11 @@ let cypher = 'MATCH(n) RETURN(n)';
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph />
+			<Graph bind:selectedNodeId={selectedNodeId}/>
 		</section>
 
 		<aside id="properties">
-			<Properties />
+			<Properties bind:selectedNodeId={selectedNodeId}/>
 		</aside>
 	</div>
 </div>
