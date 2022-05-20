@@ -1,13 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
-
 	import Settings from './settings/Settings.svelte';
 
 	let settingsDialog;
-
-	onMount(() => {
-		settingsDialog.show();
-	});
 </script>
 
 <span id="header">
@@ -22,7 +16,6 @@
 	#header {
 		display: flex;
 		justify-content: space-between;
-		box-sizing: border-box;
 		padding: 0 0.25em;
 
 		height: 100%;
