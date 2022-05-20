@@ -1,54 +1,58 @@
 <script>
-	import { settings } from "./settings";
+	import { settings } from './settings';
 
-    let dialog;
+	let dialog;
 
-    export function show() {
-        dialog.showModal();
-    }
+	export function show() {
+		dialog.showModal();
+	}
 
-    function hide() {
-        dialog.close();
-    }
+	function hide() {
+		dialog.close();
+	}
 </script>
-
 
 <dialog bind:this={dialog}>
 	<button on:click={hide}>✕</button>
 	<h3>Server Settings</h3>
 	<form method="dialog">
 		<label for="server">Server</label>
-		<input id="server" name="server" type="text" bind:value={$settings.server} placeholder="neo4j+s://id.databases.neo4j.io:7474">
+		<input
+			id="server"
+			name="server"
+			type="text"
+			bind:value={$settings.server}
+			placeholder="neo4j+s://id.databases.neo4j.io:7474"
+		/>
 
 		<label for="user">User</label>
-		<input id="user" name="user" type="text" bind:value={$settings.user}>
+		<input id="user" name="user" type="text" bind:value={$settings.user} />
 
 		<label for="password">Password</label>
-		<input id="password" name="password" type="password" bind:value={$settings.password}>
+		<input id="password" name="password" type="password" bind:value={$settings.password} />
 	</form>
 </dialog>
 
-
 <style>
-    dialog {
-        border: none;
-    }
-    dialog::backdrop {
-        background: rgba(0,0,0,0.5);
-    }
-    
+	dialog {
+		border: none;
+	}
+	dialog::backdrop {
+		background: rgba(0, 0, 0, 0.5);
+	}
+
 	dialog button {
 		position: absolute;
 		right: 1em;
 		top: 1em;
 		font-size: 1em;
-    }
+	}
 
-    dialog h3 {
-        padding: 0;
-        margin: 0;
+	dialog h3 {
+		padding: 0;
+		margin: 0;
 		margin-bottom: 1em;
-    }
+	}
 
 	dialog form {
 		display: flex;

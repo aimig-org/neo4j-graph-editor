@@ -1,6 +1,4 @@
-<span id="footer">
-    footer
-</span>
+<span id="footer"> footer </span>
 
 <style>
 	#footer {

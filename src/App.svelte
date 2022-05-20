@@ -1,13 +1,11 @@
 <!--
 This is the main component that creates the basic structure of the application.
 -->
-
 <script>
-	import Header from "./Header.svelte";
-	import Editor from "./Editor/Editor.svelte";
-	import Footer from "./Footer.svelte";
+	import Header from './Header.svelte';
+	import Editor from './editor/Editor.svelte';
+	import Footer from './Footer.svelte';
 </script>
-
 
 <main>
 	<header>
@@ -17,10 +15,9 @@ This is the main component that creates the basic structure of the application.
 		<Editor />
 	</article>
 	<footer>
-		<Footer />	
+		<Footer />
 	</footer>
 </main>
-
 
 <style>
 	:root {

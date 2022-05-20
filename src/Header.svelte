@@ -1,7 +1,7 @@
 <script>
-	import { onMount } from "svelte";
+	import { onMount } from 'svelte';
 
-	import Settings from "./settings/Settings.svelte";
+	import Settings from './settings/Settings.svelte';
 
 	let settingsDialog;
 
@@ -16,7 +16,6 @@
 		<button id="settingsBtn" title="Show server settings" on:click={settingsDialog.show}>⚙</button>
 		<Settings bind:this={settingsDialog} />
 	</nav>
-
 </span>
 
 <style>
