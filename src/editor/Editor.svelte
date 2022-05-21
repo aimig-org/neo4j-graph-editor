@@ -1,27 +1,27 @@
 <script>
-import CypherInput from "./CypherInput.svelte";
-import Graph from './Graph.svelte';
-import Properties from "./Properties.svelte";
+	import CypherInput from './CypherInput.svelte';
+	import Graph from './Graph.svelte';
+	import Properties from './Properties.svelte';
 
-let cypher = 'MATCH(n) RETURN(n)';
+	let selectedNodeId = 0;
+	let cypher = 'MATCH(n) RETURN(n)';
 </script>
 
 <div id="editor">
 	<header>
-		<CypherInput cypher={cypher} />
+		<CypherInput {cypher} />
 	</header>
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph />
+			<Graph bind:selectedNodeId />
 		</section>
 
 		<aside id="properties">
-			<Properties />
+			<Properties bind:selectedNodeId />
 		</aside>
 	</div>
 </div>
-
 
 <style>
 	#editor {
@@ -34,7 +34,7 @@ let cypher = 'MATCH(n) RETURN(n)';
 	#editor .flex-container {
 		display: flex;
 		flex-direction: column;
-    	flex-grow: 1;
+		flex-grow: 1;
 		height: calc(100% - 3em);
 	}
 
