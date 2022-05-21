@@ -86,3 +86,24 @@ button[disabled] {
 	cursor: default;
 	pointer-events: none;
 }
+
+/********************************************
+ * Overwrite vis-network styles */
+div.vis-network div.vis-manipulation {
+	background: var(--background) !important;
+	height: 30px !important;
+}
+div.vis-network button.vis-close {
+	background: none !important;
+}
+div.vis-network button.vis-close:after {
+	content: '✕';
+	font-size: 1em;
+}
+div.vis-network div.vis-manipulation button.vis-button {
+	border: 1px solid transparent !important;
+}
+div.vis-network div.vis-manipulation button.vis-button:hover {
+	box-shadow: none !important;
+	border: 1px solid var(--border) !important;
+}

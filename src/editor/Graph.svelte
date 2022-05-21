@@ -59,7 +59,11 @@
 	});
 </script>
 
-<div id="network">Network</div>
+<div id="network" />
+
+<svelte:head>
+	<link rel="stylesheet" href="//unpkg.com/vis-network@9.1.2/styles/vis-network.css" />
+</svelte:head>
 
 <style>
 	#network {
