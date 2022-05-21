@@ -1,4 +1,5 @@
 <script>
+	import ConnectionChecker from './ConnectionChecker.svelte';
 	import { settings } from './settings';
 
 	let dialog;
@@ -31,6 +32,9 @@
 		<label for="password">Password</label>
 		<input id="password" name="password" type="password" bind:value={$settings.password} />
 	</form>
+	<div id="ConnectionChecker">
+		<ConnectionChecker />
+	</div>
 </dialog>
 
 <style>
@@ -69,5 +73,11 @@
 	dialog form button {
 		margin-top: 1em;
 		align-self: flex-end;
+	}
+
+	dialog #ConnectionChecker {
+		margin-top: 1em;
+		max-width: 30em;
+		font-size: small;
 	}
 </style>
