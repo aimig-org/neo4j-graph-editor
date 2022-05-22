@@ -2,14 +2,41 @@
 This is the main component that creates the basic structure of the application.
 -->
 <script>
+	import { onDestroy, onMount } from 'svelte';
+
 	import Header from './Header.svelte';
 	import Editor from './editor/Editor.svelte';
 	import Footer from './Footer.svelte';
+	import networkStore from './store';
+	import { serverSettings } from './settings/settings';
+
+	let settingsDialog;
+	let settingsUnsubscribe;
+
+	onMount(async () => {
+		/* Ater the App is loaded we need to:
+		 * subscripbe to changes of teh server-settings
+		 * and reconnect to the server. */
+		settingsUnsubscribe = serverSettings.subscribe(async serverSettings => {
+			const isValid = await networkStore.setServerSettings(serverSettings);
+			if (isValid) {
+				await networkStore.connect();
+			} else {
+				console.warn(`[App⚡serverSettings] invalid serverSettings`);
+				settingsDialog.show();
+			}
+		});
+	});
+
+	onDestroy(async () => {
+		await networkStore.disconnect();
+		settingsUnsubscribe ?? settingsUnsubscribe();
+	});
 </script>
 
 <main>
 	<header>
-		<Header />
+		<Header bind:settingsDialog />
 	</header>
 	<article>
 		<Editor />

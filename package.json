@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/mojoaxel/neo4j-graph-editor.git"
   },
-  "license": "AGPL-v3.0",
+  "license": "AGPL-3.0",
   "prettier": "@fullstax/prettier-config",
   "scripts": {
     "build": "rollup -c",
@@ -29,6 +29,9 @@
     "@egjs/hammerjs": "^2.0.17",
     "component-emitter": "^1.3.0",
     "keycharm": "^0.4.0",
+    "lodash.debounce": "^4.0.8",
+    "nanoid": "^3.3.4",
+    "neo4j-driver": "^4.4.5",
     "timsort": "^0.3.0",
     "uuid": "^8.3.2",
     "vis-data": "^7.1.4",

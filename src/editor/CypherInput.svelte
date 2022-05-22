@@ -1,21 +1,29 @@
 <script>
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
+
 	export let cypher;
 </script>
 
 <section id="cypher">
-	<span>neo4j$</span>
-	<input type="text" bind:value={cypher} />
-	<button id="sendCypherBtn" title="Execute cypher" disabled>▸</button>
+	<form on:submit|preventDefault={() => dispatch('execute')}>
+		<span>neo4j$</span>
+		<input type="text" bind:value={cypher} />
+		<button type="submit" id="sendCypherBtn" title="Execute cypher">▸</button>
+	</form>
 </section>
 
 <style>
-	#cypher {
-		display: flex;
-		justify-content: space-between;
+	#cypher form {
 		background: var(--background);
 		padding: 0.5em;
 		border-top: 1px solid var(--border);
 		border-bottom: 1px solid var(--border);
+	}
+	#cypher form {
+		display: flex;
+		justify-content: space-between;
 	}
 	#cypher span {
 		color: var(--text-secondary);

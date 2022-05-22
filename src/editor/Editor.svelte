@@ -1,24 +1,42 @@
 <script>
+	import { onDestroy } from 'svelte';
+	import debounce from 'lodash.debounce';
+
 	import CypherInput from './CypherInput.svelte';
 	import Graph from './Graph.svelte';
 	import Properties from './Properties.svelte';
 
-	let selectedNodeId = 0;
-	let cypher = 'MATCH(n) RETURN(n)';
+	import { appSettings, serverSettings } from '../settings/settings';
+	import networkStore from '../store';
+
+	let selectedNode;
+	let cypher = $appSettings.initialCypher;
+
+	async function runQuery() {
+		const isValid = await networkStore.setServerSettings($serverSettings);
+		if (isValid) {
+			await networkStore.loadNetwork(cypher);
+		}
+	}
+
+	const runQueryDebounced = debounce(runQuery, 1000);
+	const unsubscribeSettings = serverSettings.subscribe(runQueryDebounced);
+
+	onDestroy(unsubscribeSettings);
 </script>
 
 <div id="editor">
 	<header>
-		<CypherInput {cypher} />
+		<CypherInput bind:cypher on:execute={runQuery} />
 	</header>
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph bind:selectedNodeId />
+			<Graph bind:selectedNode />
 		</section>
 
 		<aside id="properties">
-			<Properties bind:selectedNodeId />
+			<Properties bind:selectedNode />
 		</aside>
 	</div>
 </div>
@@ -43,7 +61,8 @@
 	}
 
 	#editor .flex-container #properties {
-		flex: 0 1 300px;
+		width: 300px;
+		max-width: 300px;
 	}
 
 	@media screen and (min-width: 640px) {

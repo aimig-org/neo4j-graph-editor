@@ -1,5 +1,6 @@
 <script>
-	import { settings } from './settings';
+	import ConnectionChecker from './ConnectionChecker.svelte';
+	import { serverSettings, appSettings } from './settings';
 
 	let dialog;
 
@@ -14,23 +15,39 @@
 
 <dialog bind:this={dialog}>
 	<button on:click={hide}>✕</button>
-	<h3>Server Settings</h3>
-	<form method="dialog">
-		<label for="server">Server</label>
-		<input
-			id="server"
-			name="server"
-			type="text"
-			bind:value={$settings.server}
-			placeholder="neo4j+s://id.databases.neo4j.io:7474"
-		/>
+	<fieldset>
+		<legend>
+			<h3>Server Settings</h3>
+		</legend>
+		<form method="dialog">
+			<label for="server">Server</label>
+			<input
+				id="server"
+				name="server"
+				type="text"
+				bind:value={$serverSettings.server}
+				placeholder="neo4j+s://id.databases.neo4j.io:7474"
+			/>
 
-		<label for="user">User</label>
-		<input id="user" name="user" type="text" bind:value={$settings.user} />
+			<label for="user">User</label>
+			<input id="user" name="user" type="text" bind:value={$serverSettings.user} />
 
-		<label for="password">Password</label>
-		<input id="password" name="password" type="password" bind:value={$settings.password} />
-	</form>
+			<label for="password">Password</label>
+			<input id="password" name="password" type="password" bind:value={$serverSettings.password} />
+		</form>
+		<div id="ConnectionChecker">
+			<ConnectionChecker />
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>
+			<h3>App Settings</h3>
+		</legend>
+		<form method="dialog">
+			<label for="cypher">Initial cypher</label>
+			<textarea id="cypher" name="cypher" bind:value={$appSettings.initialCypher} />
+		</form>
+	</fieldset>
 </dialog>
 
 <style>
@@ -48,10 +65,13 @@
 		font-size: 1em;
 	}
 
+	dialog fieldset {
+		margin-top: 1em;
+	}
+
 	dialog h3 {
 		padding: 0;
 		margin: 0;
-		margin-bottom: 1em;
 	}
 
 	dialog form {
@@ -69,5 +89,11 @@
 	dialog form button {
 		margin-top: 1em;
 		align-self: flex-end;
+	}
+
+	dialog #ConnectionChecker {
+		margin-top: 1em;
+		max-width: 30em;
+		font-size: small;
 	}
 </style>

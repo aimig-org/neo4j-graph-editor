@@ -55,6 +55,9 @@ export default {
 		resolve({
 			browser: true,
 			dedupe: ['svelte'],
+
+			// this is needed for the neo4j.driver import
+			preferBuiltins: false,
 		}),
 		commonjs(),
 

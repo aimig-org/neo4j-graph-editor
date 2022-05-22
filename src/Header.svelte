@@ -1,7 +1,7 @@
 <script>
 	import Settings from './settings/Settings.svelte';
 
-	let settingsDialog;
+	export let settingsDialog;
 </script>
 
 <span id="header">
