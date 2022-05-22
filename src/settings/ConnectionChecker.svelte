@@ -1,9 +1,9 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import * as neo4j from 'neo4j-driver';
 	import debounce from 'lodash.debounce';
 
-	import { settings } from './settings';
+	import { serverSettings } from './settings';
 
 	let status = 'initializing...';
 
@@ -11,24 +11,27 @@
 		try {
 			status = `connection...`;
 			const driver = neo4j.driver(
-				$settings.server,
-				neo4j.auth.basic($settings.user, $settings.password)
+				$serverSettings.server,
+				neo4j.auth.basic($serverSettings.user, $serverSettings.password)
 			);
 			await driver.verifyConnectivity();
 			status = `🎉 Valid credentials!`;
-			driver.close();
+			await driver.close();
 		} catch (err) {
 			status = `😞 Error connecting: ${err}`;
 		}
 	}
 
+	let unsubscribeSettings;
 	onMount(() => {
 		const connectDebounced = debounce(connectToServer, 1000);
-		settings.subscribe(() => {
+		unsubscribeSettings = serverSettings.subscribe(() => {
 			status = 'waiting for more input...';
 			connectDebounced();
 		});
 	});
+
+	onDestroy(unsubscribeSettings);
 </script>
 
 <div>{status}</div>

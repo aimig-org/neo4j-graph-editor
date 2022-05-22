@@ -1,35 +1,17 @@
 <script>
-	import { DataSet } from 'vis-data';
 	import { Network } from 'vis-network';
-
 	import { onMount } from 'svelte';
 
-	export let selectedNodeId;
+	import networkStore from '../store';
 
-	function initNetwork(nodeId) {
-		// create an array with nodes
-		let nodes = new DataSet([
-			{ id: 1, label: 'Node 1' },
-			{ id: 2, label: 'Node 2' },
-			{ id: 3, label: 'Node 3' },
-			{ id: 4, label: 'Node 4' },
-			{ id: 5, label: 'Node 5' },
-		]);
+	export let selectedNode;
 
-		// create an array with edges
-		let edges = new DataSet([
-			{ from: 1, to: 3 },
-			{ from: 1, to: 2 },
-			{ from: 2, to: 4 },
-			{ from: 2, to: 5 },
-			{ from: 3, to: 3 },
-		]);
-
+	function initNetwork(domElementId) {
 		// create a network
-		const container = document.getElementById(nodeId);
+		const container = document.getElementById(domElementId);
 		const data = {
-			nodes: nodes,
-			edges: edges,
+			nodes: networkStore.nodes,
+			edges: networkStore.edges,
 		};
 		const options = {
 			interaction: {
@@ -39,23 +21,120 @@
 				enabled: true,
 			},
 			nodes: {
+				size: 20,
+				physics: true,
 				shape: 'circle',
+				borderWidth: 3,
 				color: '#FFFF00',
+				//shadow: true,
+				widthConstraint: {
+					minimum: 100,
+					maximum: 100,
+				},
+			},
+			edges: {
+				physics: true,
+				smooth: {
+					type: 'continuous',
+					//forceDirection: 'none',
+					//roundness: 0.01,
+				},
+				arrows: {
+					to: {
+						enabled: true,
+					},
+				},
+				//shadow: true,
+			},
+			physics: {
+				forceAtlas2Based: {
+					springLength: 300,
+					springConstant: 0.33,
+					damping: 0.5,
+					avoidOverlap: 1,
+				},
+				minVelocity: 2,
+				solver: 'forceAtlas2Based',
+				timestep: 0.5,
+				stabilization: {
+					enabled: false,
+					//iterations: 100,
+				},
 			},
 		};
-		network = new Network(container, data, options);
+		networkGraph = new Network(container, data, options);
 
-		network.on('selectNode', function (params) {
-			console.log('selectNode Event:', params);
-			selectedNodeId = params.nodes[0];
+		networkGraph.on('selectNode', function (params) {
+			console.log(`[Graph] selectNode Event:`, params);
+			selectedNode = networkStore.nodes.get(params.nodes[0]);
+		});
+		networkGraph.on('dragStart', function (params) {
+			console.log(`[Graph] dragStart Event:`, params);
+			selectedNode = networkStore.nodes.get(params.nodes[0]);
+		});
+		networkGraph.on('deselectNode', function (params) {
+			console.log(`[Graph] deselectNode Event:`, params);
+			selectedNode = undefined;
 		});
 
-		return network;
+		// disable physics after initialization
+		networkGraph.on('stabilized', params => {
+			if (params.iterations > 1) {
+				console.log(`[Graph] stabilized Event:`, params);
+				networkGraph.setOptions({
+					...options,
+					...{
+						physics: false,
+					},
+				});
+			}
+		});
+
+		// [
+		// 	'click',
+		// 	'doubleClick',
+		// 	'oncontext',
+		// 	// 'hold',
+		// 	// 'release',
+		// 	'select',
+		// 	'selectNode',
+		// 	'selectEdge',
+		// 	'deselectNode',
+		// 	'deselectEdge',
+		// 	// 'dragStart',
+		// 	// 'dragging',
+		// 	// 'dragEnd',
+		// 	'controlNodeDragging',
+		// 	'controlNodeDragEnd',
+		// 	// 'hoverNode',
+		// 	// 'blurNode',
+		// 	// 'hoverEdge',
+		// 	// 'blurEdge',
+		// 	// 'zoom',
+		// 	'showPopup',
+		// 	'hidePopup',
+		// 	// 'startStabilizing',
+		// 	// 'stabilizationProgress',
+		// 	// 'stabilizationIterationsDone',
+		// 	// 'stabilized',
+		// 	// 'resize',
+		// 	// 'initRedraw',
+		// 	// 'beforeDrawing',
+		// 	// 'afterDrawing',
+		// 	'animationFinished',
+		// 	'configChange',
+		// ].forEach(event => {
+		// 	networkGraph.on(event, params => {
+		// 		console.log(`[Graph] event "${event}":`, params);
+		// 	});
+		// });
+
+		return networkGraph;
 	}
 
-	let network;
+	let networkGraph;
 	onMount(async () => {
-		network = initNetwork('network');
+		networkGraph = initNetwork('network');
 	});
 </script>
 

@@ -1,30 +1,75 @@
 <script>
-	export let selectedNodeId;
+	import { getColorByLabels } from '../helpers';
+
+	export let selectedNode;
+
+	function getNeo4jValue(value) {
+		console.log(`[Properties.getNeo4jValue] value:${JSON.stringify(value)}`, value);
+		if (typeof value === 'object' && 'low' in value && 'high' in value) {
+			return Number(value.low);
+		} else {
+			return value;
+		}
+	}
+
+	function getLabelStyle(label) {
+		const style = getColorByLabels([label]);
+		return [`background-color:${style.background}`, `color:${style.color}`].join(';');
+	}
 </script>
 
 <div id="panel">
-	<filedset>
-		<legend>
-			<h2>Lables</h2>
-		</legend>
-		<ul>
-			<li class="label patient">Patient</li>
-			<li class="label problem">Problem</li>
-		</ul>
-	</filedset>
+	{#if selectedNode}
+		<filedset>
+			<legend>
+				<h2>Node</h2>
+			</legend>
+			<form id="properties">
+				<label for="selectedNode">id</label>
+				<input type="text" id="selectedNode" name="selectedNode" value={selectedNode.id} readonly />
 
-	<filedset>
-		<legend>
-			<h2>Properties</h2>
-		</legend>
-		<form id="properties">
-			<label for="selectedNodeId">id</label>
-			<input type="text" id="selectedNodeId" name="selectedNodeId" value={selectedNodeId} />
+				<label for="name">name</label>
+				<input type="text" id="name" name="name" value={selectedNode.properties.name} readonly />
+			</form>
+		</filedset>
 
-			<label for="name">name</label>
-			<input type="text" id="name" name="name" value={selectedNodeId} />
-		</form>
-	</filedset>
+		{#if selectedNode.labels}
+			<filedset>
+				<legend>
+					<h2>Lables</h2>
+				</legend>
+				<ul>
+					{#each selectedNode.labels as label}
+						<li class="label {label.toLowerCase()}" style={getLabelStyle(label)}>
+							{label}
+						</li>
+					{/each}
+				</ul>
+			</filedset>
+		{/if}
+
+		{#if selectedNode.properties}
+			<filedset>
+				<legend>
+					<h2>Properties</h2>
+				</legend>
+				<form id="properties">
+					{#each Object.keys(selectedNode.properties).filter(k => !['id', 'name'].includes(k)) as key}
+						<label for={key}>{key}</label>
+						<input
+							type="text"
+							id={key}
+							name={key}
+							value={getNeo4jValue(selectedNode.properties[key])}
+							readonly
+						/>
+					{/each}
+				</form>
+			</filedset>
+		{/if}
+	{:else}
+		<i>select node to show properties</i>
+	{/if}
 </div>
 
 <style>
@@ -36,6 +81,9 @@
 	#panel h2 {
 		margin: 0;
 		padding: 0;
+	}
+	#panel filedset {
+		margin-bottom: 1em;
 	}
 
 	ul {
@@ -51,14 +99,6 @@
 
 		background-color: lightgray;
 		border-radius: 0.25em;
-	}
-	ul li.label.patient {
-		background-color: lightskyblue;
-		color: white;
-	}
-	ul li.label.problem {
-		background-color: red;
-		color: white;
 	}
 
 	#properties {
