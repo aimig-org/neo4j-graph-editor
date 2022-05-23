@@ -3,17 +3,19 @@
 
 # neo4j-graph-editor
 
-Edit [neo4j](https://neo4j.com/) databases directly using a [vis-network](https://github.com/visjs/vis-network).
+Edit [neo4j](https://neo4j.com/) databases directly using the [vis-network](https://github.com/visjs/vis-network) graph library.
 
-[🚀 DEMO](fllstx.github.io/neo4j-graph-editor/)
+[🚀 DEMO](https://fllstx.github.io/neo4j-graph-editor/)
 
 ## State of development
 
-This software is currently in pre-release alpha state. It is not read for pruductive use, yet.
+_This software is currently in pre-release alpha state. It is not read for pruductive use, yet._
 
-See our [Kanban board](https://github.com/fllstx/neo4j-graph-editor/projects/1) for details.
+🔧 See our [Kanban board](https://github.com/fllstx/neo4j-graph-editor/projects/1) for details.
 
 ## Development
+
+### 💻 Run locally:
 
 ```sh
 git clone https://github.com/fllstx/neo4j-graph-editor.git
@@ -21,6 +23,13 @@ cd neo4j-graph-editor
 npm install
 npm run dev
 ```
+
+### 🖥️ Build and deploy:
+
+```sh
+npm run build
+```
+Deploy the created `public` folder to a simple static webserver.
 
 ## License
 
