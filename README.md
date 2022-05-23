@@ -1,3 +1,5 @@
+[![Deploy to GitHub Pages](https://github.com/mojoaxel/neo4j-graph-editor/actions/workflows/deploy.yml/badge.svg)](https://github.com/mojoaxel/neo4j-graph-editor/actions/workflows/deploy.yml)
+
 *Psst — looking for a more complete solution? Check out [SvelteKit](https://kit.svelte.dev), the official framework for building web applications of all sizes, with a beautiful development experience and flexible filesystem-based routing.*
 
 *Looking for a shareable component template instead? You can [use SvelteKit for that as well](https://kit.svelte.dev/docs#packaging) or the older [sveltejs/component-template](https://github.com/sveltejs/component-template)*
