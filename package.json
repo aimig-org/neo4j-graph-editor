@@ -1,6 +1,6 @@
 {
   "name": "neo4j-graph-editor",
-  "version": "0.0.1",
+  "version": "1.0.0-beta.0",
   "private": true,
   "repository": {
     "type": "git",
