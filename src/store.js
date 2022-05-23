@@ -66,7 +66,7 @@ class Neo4jNetworkStore {
 		}
 	}
 
-	async setServerSettings(serverSettings) {
+	async setServerSettings(serverSettings = this.#serverSettings) {
 		const isValid = await this.validateServerSettings(serverSettings);
 		if (isValid) {
 			this.#serverSettings = serverSettings;
@@ -77,7 +77,8 @@ class Neo4jNetworkStore {
 	}
 
 	clear() {
-		console.log(`[Neo4jNetworkStore.clear] removing all nodes and edges`);
+		console.log(`[Neo4jNetworkStore.clear] removing all nodes and edges.`);
+		// diable auto sync to neo4j
 		this.#disableDBAutoUpdates();
 		this.#nodes.clear();
 		this.#edges.clear();
@@ -172,36 +173,15 @@ class Neo4jNetworkStore {
 		// clear the current network before loading a new one.
 		this.clear();
 
-		try {
-			console.log(
-				`[Neo4jNetworkStore.loadNetwork] connecting to server:${this.#serverSettings.server}`
-			);
-			const driver = Neo4j.driver(
-				this.#serverSettings.server,
-				Neo4j.auth.basic(this.#serverSettings.user, this.#serverSettings.password)
-			);
-			this.#neo4jSession = driver.session();
-			console.log(`[Neo4jNetworkStore.loadNetwork] new session initialized`);
-		} catch (err) {
-			console.error(`[Neo4jNetworkStore.loadNetwork] error initializing neo4j connection: ${err}`);
-		}
+		this.connect();
 
 		try {
 			console.log(`[Neo4jNetworkStore.loadNetwork] run:${cypher}`);
 			this.#neo4jSession
 				.run(cypher)
-				// .subscribe({
-				// 	onNext: record => {
-				// 		console.log(`[Editor.executeCypher⚡onNext]`, record);
-				// 		parseNeo4jRecords(record);
-				// 	},
-				// 	onCompleted: async () => {
-				// 		console.log(`[Editor.executeCypher⚡onCompleted]`);
-				// 		await neo4jSession.close();
-				// 		enableDBAutoUpdates();
-				// 	},
-				// });
 				.then(result => {
+					/* We need to disable auto-updates TO the databese here
+					 * because the data has just been loaded FROM the database. */
 					this.#disableDBAutoUpdates();
 					result.records.forEach(record => {
 						this.#parseNeo4jRecords(record);
@@ -209,6 +189,7 @@ class Neo4jNetworkStore {
 					this.#enableDBAutoUpdates();
 				})
 				.catch(err => {
+					//TODO: better error handling!
 					alert(`Error executing cypher:\n${err}`);
 				})
 				.then(() => {

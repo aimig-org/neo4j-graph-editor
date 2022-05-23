@@ -2,16 +2,17 @@
 	import { onDestroy } from 'svelte';
 	import debounce from 'lodash.debounce';
 
-	import CypherInput from './CypherInput.svelte';
-	import Graph from './Graph.svelte';
-	import Properties from './Properties.svelte';
+	import CypherInput from './editor/CypherInput.svelte';
+	import Graph from './editor/Graph.svelte';
+	import Properties from './editor/Properties.svelte';
 
-	import { appSettings, serverSettings } from '../settings/settings';
-	import networkStore from '../store';
+	import { appSettings, serverSettings } from './settings/settings';
+	import networkStore from './store';
 
 	let selectedNode;
 	let cypher = $appSettings.initialCypher;
 
+	// execute the current cypher
 	async function runQuery() {
 		const isValid = await networkStore.setServerSettings($serverSettings);
 		if (isValid) {
@@ -19,6 +20,9 @@
 		}
 	}
 
+	/* Re-execute the current cypher if the server-settings change
+	 * But only try it once every second (not on every key-stroke in teh settings-dialog).
+	 * TODO: It would be propably better to emit new server settings only if the are valid! */
 	const runQueryDebounced = debounce(runQuery, 1000);
 	const unsubscribeSettings = serverSettings.subscribe(runQueryDebounced);
 
