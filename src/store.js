@@ -2,8 +2,6 @@ import Neo4j from 'neo4j-driver';
 import { DataSet } from 'vis-data';
 import { nanoid } from 'nanoid';
 
-import { getColorByLabels } from './helpers';
-
 /**
  * TODO
  */
@@ -113,8 +111,10 @@ class Neo4jNetworkStore {
 		const newNode = {
 			id,
 			//font: { multi: 'html' },
-			color: getColorByLabels(labels),
+			//color: getColorByLabels(labels),
 			label: [label, `[${labels.join('')}]`].join('\n'),
+			group: labels[0] ? labels[0].toLowerCase() : null,
+			title: label,
 			labels,
 			properties,
 		};

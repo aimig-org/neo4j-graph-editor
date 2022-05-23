@@ -3,6 +3,7 @@
 	import { onMount } from 'svelte';
 
 	import networkStore from '../store';
+	import { defaultNodeStyle, nodeGroupStyles } from '../settings/labels';
 
 	export let selectedNode;
 
@@ -82,12 +83,16 @@
 	}
 
 	function initNetwork(domElementId) {
+		const shadow = false;
+
 		// create a network
 		const container = document.getElementById(domElementId);
+
 		const data = {
 			nodes: networkStore.nodes,
 			edges: networkStore.edges,
 		};
+
 		const options = {
 			interaction: {
 				hover: true,
@@ -95,20 +100,26 @@
 			manipulation: {
 				enabled: true,
 			},
+			//TODO: the physics is not yet "nice"
+			physics: {
+				barnesHut: {
+					centralGravity: 0,
+					springLength: 200,
+				},
+				minVelocity: 0.75,
+			},
 			nodes: {
-				size: 20,
-				physics: true,
 				shape: 'circle',
 				borderWidth: 3,
-				color: '#FFFF00',
-				//shadow: true,
+				shadow,
 				widthConstraint: {
 					minimum: 100,
 					maximum: 100,
 				},
+				// default node style (if no group is set)
+				...defaultNodeStyle,
 			},
 			edges: {
-				physics: true,
 				smooth: {
 					type: 'continuous',
 					//forceDirection: 'none',
@@ -119,25 +130,11 @@
 						enabled: true,
 					},
 				},
-				//shadow: true,
+				shadow,
 			},
-			physics: {
-				forceAtlas2Based: {
-					springLength: 300,
-					springConstant: 0.33,
-					damping: 0.5,
-					avoidOverlap: 1,
-				},
-				minVelocity: 2,
-				solver: 'forceAtlas2Based',
-				timestep: 0.5,
-				stabilization: {
-					enabled: false,
-					//iterations: 100,
-				},
-			},
-			selectedNode,
+			groups: nodeGroupStyles,
 		};
+
 		networkGraph = new Network(container, data, options);
 
 		appendNetworkEvents();
