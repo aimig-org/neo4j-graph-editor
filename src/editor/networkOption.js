@@ -40,7 +40,15 @@ export const options = {
 		shadow: false,
 	},
 	groups: nodeGroupStyles,
-	// layout: {
-	// 	improvedLayout: false,
-	// },
+
+	// see https://visjs.github.io/vis-network/docs/network/layout.html
+	layout: {
+		hierarchical: {
+			direction: 'LR', // Left to Right
+			levelSeparation: 300,
+			nodeSpacing: 100,
+			treeSpacing: 400,
+			sortMethod: 'directed',
+		},
+	},
 };
