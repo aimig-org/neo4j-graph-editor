@@ -116,9 +116,8 @@ class Neo4jNetworkStore {
 
 		const newNode = {
 			id,
-			//font: { multi: 'html' },
-			//color: getColorByLabels(labels),
-			label: [label, `[${labels.join('')}]`].join('\n'),
+			font: { multi: 'html' },
+			label: this.#getNodeLabel(id, label, labels, properties),
 			group: labels[0] ? labels[0].toLowerCase() : null,
 			title: label,
 			labels,
@@ -256,6 +255,10 @@ class Neo4jNetworkStore {
 		console.log(`[Neo4jNetworkStore.#disableDBAutoUpdates]`);
 		this.#nodes.off('*', this.#handleDataSetEvent);
 		this.#edges.off('*', this.#handleDataSetEvent);
+	}
+
+	#getNodeLabel(id, label, labels, properties) {
+		return [label, labels.map(l => `<i>${l}</i>`)].join('\n');
 	}
 }
 

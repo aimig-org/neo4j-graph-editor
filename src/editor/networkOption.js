@@ -7,8 +7,8 @@ export const options = {
 	manipulation: {
 		enabled: true,
 	},
-	//TODO: the physics is not yet "nice"
 	physics: {
+		enabled: false,
 		barnesHut: {
 			centralGravity: 0,
 			springLength: 200,

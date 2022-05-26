@@ -2,35 +2,35 @@
 export const nodeGroupStyles = {
 	problem: {
 		font: {
-			color: 'white',
+			color: 'black',
 		},
 		color: {
 			border: 'red',
-			background: 'orangered',
-			highlight: { background: 'orangered', border: 'darkred' },
-			hover: { background: 'orangered', border: 'darkred' },
+			background: 'white',
+			highlight: { background: 'white', border: 'red' },
+			hover: { background: 'white', border: 'red' },
 		},
 	},
 	observation: {
 		font: {
-			color: 'white',
+			color: 'black',
 		},
 		color: {
-			background: 'orange',
-			border: 'orangered',
-			highlight: { background: 'orange', border: 'red' },
-			hover: { background: 'orange', border: 'red' },
+			border: 'orange',
+			background: 'white',
+			highlight: { background: 'white', border: 'orange' },
+			hover: { background: 'white', border: 'orange' },
 		},
 	},
 	obs_instance: {
 		font: {
-			color: 'white',
+			color: 'black',
 		},
 		color: {
-			background: 'darkturquoise',
-			border: 'teal',
-			highlight: { background: 'darkturquoise', border: 'blue' },
-			hover: { background: 'darkturquoise', border: 'blue' },
+			border: 'blue',
+			background: 'white',
+			highlight: { background: 'white', border: 'blue' },
+			hover: { background: 'white', border: 'blue' },
 		},
 	},
 };

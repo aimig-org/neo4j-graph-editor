@@ -28,20 +28,6 @@
 			selectedNode = null;
 		});
 
-		// disable physics after initialization
-		// TODO: this is not working properly
-		networkGraph.on('stabilized', params => {
-			if (params.iterations > 1) {
-				console.log(`[Graph] stabilized Event:`, params);
-				networkGraph.setOptions({
-					...options,
-					...{
-						physics: false,
-					},
-				});
-			}
-		});
-
 		// This is only for Debugging
 		{
 			// [

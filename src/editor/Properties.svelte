@@ -14,7 +14,11 @@
 
 	function getLabelStyle(label) {
 		const nodeStyle = nodeGroupStyles[label.toLowerCase()] || defaultNodeStyle;
-		return [`background:${nodeStyle.color.background}`, `color:${nodeStyle.font.color}`].join(';');
+		return [
+			`background:white`,
+			`color:${nodeStyle.font.color}`,
+			`border: 2px solid ${nodeStyle.color.border}`,
+		].join(';');
 	}
 </script>
 
@@ -25,7 +29,7 @@
 				<h2>Node</h2>
 			</legend>
 			<form class="properties">
-				{#each Object.keys(selectedNode).filter(k => !['labels', 'properties'].includes(k)) as key}
+				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties'].includes(k)) as key}
 					<label for={key}>{key}</label>
 					<input type="text" id={key} name={key} value={selectedNode[key]} readonly />
 				{/each}
