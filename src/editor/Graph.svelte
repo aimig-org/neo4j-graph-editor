@@ -1,6 +1,6 @@
 <script>
 	import { Network } from 'vis-network';
-	import { onDestroy, onMount } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import networkStore from '../store';
 	import { options } from './networkOption';
@@ -10,70 +10,99 @@
 	let networkGraph;
 	let unsubscriptNetworkStore;
 
-	function appendNetworkEvents() {
-		networkGraph.on('selectNode', function (params) {
-			console.log(`[Graph] selectNode Event:`, params);
+	const dispatch = createEventDispatcher();
+
+	function listenToStoreEvents() {
+		// Listen to events of the nodes DataSet (e.g. "add", "remove", "update")
+		// see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
+		networkStore.nodes.on('*', (event, properties) => {
+			console.log(`[nodes⚡event]: "${event}" properties:${JSON.stringify(properties)}`);
+			//networkGraph.stabilize();
+		});
+
+		// Listen to events of the edges DataSet (e.g. "add", "delete", "update")
+		// see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
+		networkStore.edges.on('*', (event, properties) => {
+			console.log(`[edges⚡event]: "${event}" properties:${JSON.stringify(properties)}`);
+			//networkGraph.stabilize();
+		});
+
+		// Subscripe to general changes to the dataStore.
+		// The dataStore changes e.g. is after a new Network is loaded.
+		unsubscriptNetworkStore = networkStore.dataStore.subscribe(networkData => {
+			console.log(`[networkStore⚡subscripe]`);
+			networkGraph.setData(networkData);
+			//networkGraph.stabilize();
+		});
+	}
+
+	function listenToGraphEvents() {
+		networkGraph.on('selectNode', params => {
+			console.log(`[Graph⚡event] "selectNode":`, params);
 			selectedNode = networkStore.nodes.get(params.nodes[0]);
 		});
-		networkGraph.on('dragStart', function (params) {
-			console.log(`[Graph] dragStart Event:`, params);
+		networkGraph.on('dragStart', params => {
+			console.log(`[Graph⚡event] "dragStart":`, params);
 			/* Only set selectedNode if nodes is valid.
 			 * This fixes #5 */
 			if (params.nodes && params.nodes.length) {
 				selectedNode = networkStore.nodes.get(params.nodes[0]);
 			}
 		});
-		networkGraph.on('deselectNode', function (params) {
-			console.log(`[Graph] deselectNode Event:`, params);
+		networkGraph.on('deselectNode', params => {
+			console.log(`[Graph⚡event] "deselectNode":`, params);
 			selectedNode = null;
+		});
+		networkGraph.on('doubleClick', params => {
+			console.log(`[Graph⚡event] "doubleClick":`, params);
+			const nodeId = params.nodes[0];
+			if (nodeId >= 0) {
+				dispatch('focusChanged', {
+					nodeId,
+				});
+			}
 		});
 
 		// This is only for Debugging
 		{
-			// [
-			// 	'click',
-			// 	'doubleClick',
-			// 	'oncontext',
-			// 	// 'hold',
-			// 	// 'release',
-			// 	'select',
-			// 	'selectNode',
-			// 	'selectEdge',
-			// 	'deselectNode',
-			// 	'deselectEdge',
-			// 	// 'dragStart',
-			// 	// 'dragging',
-			// 	// 'dragEnd',
-			// 	'controlNodeDragging',
-			// 	'controlNodeDragEnd',
-			// 	// 'hoverNode',
-			// 	// 'blurNode',
-			// 	// 'hoverEdge',
-			// 	// 'blurEdge',
-			// 	// 'zoom',
-			// 	'showPopup',
-			// 	'hidePopup',
-			// 	// 'startStabilizing',
-			// 	// 'stabilizationProgress',
-			// 	// 'stabilizationIterationsDone',
-			// 	// 'stabilized',
-			// 	// 'resize',
-			// 	// 'initRedraw',
-			// 	// 'beforeDrawing',
-			// 	// 'afterDrawing',
-			// 	'animationFinished',
-			// 	'configChange',
-			// ].forEach(event => {
-			// 	networkGraph.on(event, params => {
-			// 		console.log(`[Graph] event "${event}":`, params);
+			// 	[
+			// 		//'click',
+			// 		'doubleClick',
+			// 		'oncontext',
+			// 		// 'hold',
+			// 		// 'release',
+			// 		'select',
+			// 		//'selectNode',
+			// 		'selectEdge',
+			// 		//'deselectNode',
+			// 		'deselectEdge',
+			// 		// 'dragStart',
+			// 		// 'dragging',
+			// 		// 'dragEnd',
+			// 		'controlNodeDragging',
+			// 		'controlNodeDragEnd',
+			// 		// 'hoverNode',
+			// 		// 'blurNode',
+			// 		// 'hoverEdge',
+			// 		// 'blurEdge',
+			// 		// 'zoom',
+			// 		'showPopup',
+			// 		'hidePopup',
+			// 		// 'startStabilizing',
+			// 		// 'stabilizationProgress',
+			// 		// 'stabilizationIterationsDone',
+			// 		// 'stabilized',
+			// 		// 'resize',
+			// 		// 'initRedraw',
+			// 		// 'beforeDrawing',
+			// 		// 'afterDrawing',
+			// 		'animationFinished',
+			// 		'configChange',
+			// 	].forEach(event => {
+			// 		networkGraph.on(event, params => {
+			// 			console.log(`[Graph⚡event] "${event}":`, params);
+			// 		});
 			// 	});
-			// });
-			// networkGraph.on('beforeDrawing', params => {
-			// 	console.time('⌚ [networkGraph⚡drawing]');
-			// });
-			// networkGraph.on('afterDrawing', params => {
-			// 	console.timeEnd('⌚ [networkGraph⚡drawing]');
-			// });
 		}
 	}
 
@@ -82,26 +111,17 @@
 		const container = document.getElementById('network');
 
 		// initialize the network with the nodes/edges data from the network-store
-		const data = {
-			nodes: networkStore.nodes,
-			edges: networkStore.edges,
-		};
+		networkGraph = new Network(
+			container,
+			{
+				nodes: networkStore.nodes,
+				edges: networkStore.edges,
+			},
+			options
+		);
 
-		networkGraph = new Network(container, data, options);
-
-		unsubscriptNetworkStore = networkStore.dataStore.subscribe(networkData => {
-			console.log(`networkStore⚡subscripe`);
-
-			console.time('⌚ [Graph⚡subscribe] setData');
-			networkGraph.setData(networkData);
-			console.timeEnd('⌚ [Graph⚡subscribe] setData');
-
-			//console.time('⌚ [Graph⚡subscribe] stabilize');
-			networkGraph.stabilize();
-			//console.timeEnd(' ⌚[Graph⚡subscribe] stabilize');
-		});
-
-		appendNetworkEvents();
+		listenToStoreEvents();
+		listenToGraphEvents();
 	});
 
 	onDestroy(() => {
