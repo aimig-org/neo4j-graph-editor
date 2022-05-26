@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
 
+const initialCypher = 'MATCH (n)-[r]->(m) RETURN n,r,m';
+
 /* Server Settings */
 const SERVER_SETTINGS_KEY = 'server';
 const serverSettingsFromStore = localStorage.getItem(SERVER_SETTINGS_KEY);
@@ -21,7 +23,7 @@ const appSettingsFromStore = localStorage.getItem(APP_SETTINGS_KEY);
 const appSettingValue = appSettingsFromStore
 	? JSON.parse(appSettingsFromStore)
 	: {
-			initialCypher: 'MATCH (n)-[r]->(m) RETURN n,r,m',
+			initialCypher,
 	  };
 export const appSettings = writable(appSettingValue);
 appSettings.subscribe(settings => {
