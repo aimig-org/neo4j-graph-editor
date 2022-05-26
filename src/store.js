@@ -29,14 +29,6 @@ class Neo4jNetworkStore {
 			nodes: this.#nodes,
 			edges: this.#edges,
 		});
-
-		/* queue Changes before throwing events.
-		 * see https://visjs.github.io/vis-data/data/dataset.html#Methods */
-		const queueSettings = {
-			delay: 2000,
-		};
-		this.#nodes.setOptions(queueSettings);
-		this.#edges.setOptions(queueSettings);
 	}
 
 	async connect() {
@@ -188,9 +180,24 @@ class Neo4jNetworkStore {
 					/* We need to disable auto-updates TO the databese here
 					 * because the data has just been loaded FROM the database. */
 					this.#disableDBAutoUpdates();
+
+					/* queue Changes before throwing events.
+					 * see https://visjs.github.io/vis-data/data/dataset.html#Methods */
+					// const queueSettings = {
+					// 	queue: { delay: 2000 },
+					// };
+					// this.#nodes.setOptions(queueSettings);
+					// this.#edges.setOptions(queueSettings);
+
+					// add all nodes and edges from teh server
 					result.records.forEach(record => {
 						this.#parseNeo4jRecords(record);
 					});
+
+					// flush queued DataSet events
+					//this.#nodes.flush();
+					//this.#edges.flush();
+
 					this.#enableDBAutoUpdates();
 				})
 				.catch(err => {
@@ -216,12 +223,13 @@ class Neo4jNetworkStore {
 	}
 
 	#parseNeo4jRecords(records) {
+		//console.time('⌚ [Neo4jNetworkStore.parseNeo4jRecords]');
 		records.map(async x => {
 			if (x instanceof Neo4j.types.Node) {
 				const id = x.identity.toInt();
 				const labels = x.labels;
 				const properties = x.properties;
-				const label = properties.text || properties.name;
+				const label = properties.text || properties.name || properties.title;
 				this.addNode(id, label, labels, properties);
 			} else if (x instanceof Neo4j.types.Relationship) {
 				const id = x.identity.toInt();
@@ -236,12 +244,13 @@ class Neo4jNetworkStore {
 				console.warn(`[Editor.parseNeo4jRecord] Result of unknown type "${typeof x}" found: `, x);
 			}
 		});
+		//console.timeEnd('⌚ [Neo4jNetworkStore.parseNeo4jRecords]');
 	}
 
 	#handleDataSetEvent(event, properties, senderId) {
-		console.log(
-			`[Neo4jNetworkStore.#handleDataSetEvent] event "${event}": ${JSON.stringify(properties)}`
-		);
+		// console.log(
+		// 	`[Neo4jNetworkStore.#handleDataSetEvent] event "${event}": ${JSON.stringify(properties)}`
+		// );
 		//TODO: convert the network-change to a cypher and execute it
 	}
 

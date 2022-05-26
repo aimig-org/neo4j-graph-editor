@@ -68,6 +68,12 @@
 			// 		console.log(`[Graph] event "${event}":`, params);
 			// 	});
 			// });
+			// networkGraph.on('beforeDrawing', params => {
+			// 	console.time('⌚ [networkGraph⚡drawing]');
+			// });
+			// networkGraph.on('afterDrawing', params => {
+			// 	console.timeEnd('⌚ [networkGraph⚡drawing]');
+			// });
 		}
 	}
 
@@ -84,9 +90,15 @@
 		networkGraph = new Network(container, data, options);
 
 		unsubscriptNetworkStore = networkStore.dataStore.subscribe(networkData => {
-			console.log(`networkStore subscripe`);
+			console.log(`networkStore⚡subscripe`);
+
+			console.time('⌚ [Graph⚡subscribe] setData');
 			networkGraph.setData(networkData);
+			console.timeEnd('⌚ [Graph⚡subscribe] setData');
+
+			//console.time('⌚ [Graph⚡subscribe] stabilize');
 			networkGraph.stabilize();
+			//console.timeEnd(' ⌚[Graph⚡subscribe] stabilize');
 		});
 
 		appendNetworkEvents();

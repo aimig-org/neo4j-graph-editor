@@ -40,4 +40,7 @@ export const options = {
 		shadow: false,
 	},
 	groups: nodeGroupStyles,
+	// layout: {
+	// 	improvedLayout: false,
+	// },
 };
