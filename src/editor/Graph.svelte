@@ -1,11 +1,14 @@
 <script>
 	import { Network } from 'vis-network';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	import networkStore from '../store';
-	import { defaultNodeStyle, nodeGroupStyles } from '../settings/labels';
+	import { options } from './networkOption';
 
 	export let selectedNode;
+
+	let networkGraph;
+	let unsubscriptNetworkStore;
 
 	function appendNetworkEvents() {
 		networkGraph.on('selectNode', function (params) {
@@ -27,17 +30,17 @@
 
 		// disable physics after initialization
 		// TODO: this is not working properly
-		// networkGraph.on('stabilized', params => {
-		// 	if (params.iterations > 1) {
-		// 		console.log(`[Graph] stabilized Event:`, params);
-		// 		networkGraph.setOptions({
-		// 			...options,
-		// 			...{
-		// 				physics: false,
-		// 			},
-		// 		});
-		// 	}
-		// });
+		networkGraph.on('stabilized', params => {
+			if (params.iterations > 1) {
+				console.log(`[Graph] stabilized Event:`, params);
+				networkGraph.setOptions({
+					...options,
+					...{
+						physics: false,
+					},
+				});
+			}
+		});
 
 		// This is only for Debugging
 		{
@@ -82,69 +85,29 @@
 		}
 	}
 
-	function initNetwork(domElementId) {
-		const shadow = false;
-
+	onMount(async () => {
 		// create a network
-		const container = document.getElementById(domElementId);
+		const container = document.getElementById('network');
 
+		// initialize the network with the nodes/edges data from the network-store
 		const data = {
 			nodes: networkStore.nodes,
 			edges: networkStore.edges,
 		};
 
-		const options = {
-			interaction: {
-				hover: true,
-			},
-			manipulation: {
-				enabled: true,
-			},
-			//TODO: the physics is not yet "nice"
-			physics: {
-				barnesHut: {
-					centralGravity: 0,
-					springLength: 200,
-				},
-				minVelocity: 0.75,
-			},
-			nodes: {
-				shape: 'circle',
-				borderWidth: 3,
-				shadow,
-				widthConstraint: {
-					minimum: 100,
-					maximum: 100,
-				},
-				// default node style (if no group is set)
-				...defaultNodeStyle,
-			},
-			edges: {
-				smooth: {
-					type: 'continuous',
-					//forceDirection: 'none',
-					//roundness: 0.01,
-				},
-				arrows: {
-					to: {
-						enabled: true,
-					},
-				},
-				shadow,
-			},
-			groups: nodeGroupStyles,
-		};
-
 		networkGraph = new Network(container, data, options);
 
+		unsubscriptNetworkStore = networkStore.dataStore.subscribe(networkData => {
+			console.log(`networkStore subscripe`);
+			networkGraph.setData(networkData);
+			networkGraph.stabilize();
+		});
+
 		appendNetworkEvents();
+	});
 
-		return networkGraph;
-	}
-
-	let networkGraph;
-	onMount(async () => {
-		networkGraph = initNetwork('network');
+	onDestroy(() => {
+		unsubscriptNetworkStore();
 	});
 </script>
 

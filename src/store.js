@@ -1,11 +1,12 @@
 import Neo4j from 'neo4j-driver';
 import { DataSet } from 'vis-data';
 import { nanoid } from 'nanoid';
+import { writable } from 'svelte/store';
 
-/**
- * TODO
- */
 class Neo4jNetworkStore {
+	// a svelte writable store that provides the node/edge data
+	dataStore;
+
 	// create two private DataSets
 	#nodes;
 	#edges;
@@ -23,6 +24,11 @@ class Neo4jNetworkStore {
 		 * one for node and one for edges (relations). */
 		this.#nodes = new DataSet([]);
 		this.#edges = new DataSet([]);
+
+		this.dataStore = writable({
+			nodes: this.#nodes,
+			edges: this.#edges,
+		});
 
 		/* queue Changes before throwing events.
 		 * see https://visjs.github.io/vis-data/data/dataset.html#Methods */
@@ -193,6 +199,14 @@ class Neo4jNetworkStore {
 					alert(`Error executing cypher:\n${err}`);
 				})
 				.then(() => {
+					/* Update the data-store to inform the grap that new data has been loaded.
+					 * This is used to stabillize (physics) the network */
+					this.dataStore.set({
+						nodes: this.#nodes,
+						edges: this.#edges,
+					});
+
+					// close the current session
 					return this.#neo4jSession.close();
 				});
 

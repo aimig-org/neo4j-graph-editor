@@ -14,7 +14,6 @@
 
 	function getLabelStyle(label) {
 		const nodeStyle = nodeGroupStyles[label.toLowerCase()] || defaultNodeStyle;
-		//console.log(`[Properties.getLabelStyle] nodeStyle:${JSON.stringify(nodeStyle)}`);
 		return [`background:${nodeStyle.color.background}`, `color:${nodeStyle.font.color}`].join(';');
 	}
 </script>
@@ -25,18 +24,7 @@
 			<legend>
 				<h2>Node</h2>
 			</legend>
-			<form id="properties">
-				<!-- <label for="selectedNode">id</label>
-				<input type="text" id="selectedNode" name="selectedNode" value={selectedNode.id} readonly />
-
-				<label for="name">name</label>
-				<input type="text" id="name" title="name" value={selectedNode.properties.name} readonly />
-
-				<label for="label">label</label>
-				<input type="text" id="label" title="label" value={selectedNode.label} readonly />
-
-				<label for="title">title</label>
-				<input type="text" id="title" title="title" value={selectedNode.title} readonly /> -->
+			<form class="properties">
 				{#each Object.keys(selectedNode).filter(k => !['labels', 'properties'].includes(k)) as key}
 					<label for={key}>{key}</label>
 					<input type="text" id={key} name={key} value={selectedNode[key]} readonly />
@@ -64,7 +52,7 @@
 				<legend>
 					<h2>Properties</h2>
 				</legend>
-				<form id="properties">
+				<form class="properties">
 					{#each Object.keys(selectedNode.properties).filter(k => !['id', 'name'].includes(k)) as key}
 						<label for={key}>{key}</label>
 						<input
@@ -112,17 +100,17 @@
 		border-radius: 0.25em;
 	}
 
-	#properties {
+	.properties {
 		display: grid;
 		grid-template-columns: min-content 1fr;
 		align-items: center;
 	}
-	#properties label {
+	.properties label {
 		text-align: right;
 		margin-top: 0.5em;
 		margin-right: 0.5em;
 	}
-	#properties label {
+	.properties label {
 		text-align: right;
 		margin-top: 0.5em 0;
 	}
