@@ -1,7 +1,7 @@
 import Neo4j from 'neo4j-driver';
 import { DataSet } from 'vis-data';
 import { nanoid } from 'nanoid';
-import { writable } from 'svelte/store';
+import { readable, writable } from 'svelte/store';
 
 class Neo4jNetworkStore {
 	// a svelte writable store that provides the node/edge data
@@ -29,6 +29,8 @@ class Neo4jNetworkStore {
 			nodes: this.#nodes,
 			edges: this.#edges,
 		});
+
+		this.loading = writable(true);
 	}
 
 	async connect() {
@@ -166,11 +168,15 @@ class Neo4jNetworkStore {
 		}
 	}
 
-	async loadNetwork(cypher) {
-		// clear the current network before loading a new one.
-		this.clear();
+	async loadNetwork(cypher, clear = true) {
+		this.loading.set(true);
 
-		this.connect();
+		if (clear) {
+			// clear the current network before loading a new one.
+			this.clear();
+		}
+
+		//this.connect();
 
 		try {
 			console.log(`[Neo4jNetworkStore.loadNetwork] run:${cypher}`);
@@ -202,6 +208,7 @@ class Neo4jNetworkStore {
 				})
 				.catch(err => {
 					//TODO: better error handling!
+					this.loading.set(false);
 					alert(`Error executing cypher:\n${err}`);
 				})
 				.then(() => {
@@ -213,12 +220,15 @@ class Neo4jNetworkStore {
 					});
 
 					// close the current session
-					return this.#neo4jSession.close();
+					//this.disconnect();
+
+					this.loading.set(false);
 				});
 
 			//OK: console.dir(readResult);
 		} catch (err) {
 			console.error(`[Neo4jNetworkStore.loadNetwork] error running cypher: "${cypher}": ${err}`);
+			this.loading.set(false);
 		}
 	}
 

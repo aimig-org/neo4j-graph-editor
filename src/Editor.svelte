@@ -14,27 +14,47 @@
 	let cypher = $appSettings.initialCypher;
 
 	// execute the current cypher
-	async function executeCurrentCypher() {
+	async function executeCurrentCypher(c, clear = true) {
 		const isValid = await networkStore.setServerSettings($serverSettings);
 		if (isValid) {
-			await networkStore.loadNetwork(cypher);
+			await networkStore.loadNetwork(c, clear);
 		}
 	}
 
-	async function focusOnNode(event) {
+	async function focusOnSelected() {
+		const nodeId = selectedNode.id;
+		await focusOnNode(nodeId);
+	}
+
+	async function loadConnectionsForSelectedNode() {
+		const nodeId = selectedNode.id;
+		await loadAdditionalConnections(nodeId);
+	}
+
+	async function handleDoubleClick(event) {
 		console.log(
 			`[Editor.focusOnNode] event:${JSON.stringify(event)} detail:${JSON.stringify(event.detail)}`
 		);
 		const nodeId = event.detail.nodeId;
+		await focusOnNode(nodeId);
+	}
+
+	async function focusOnNode(nodeId) {
+		// load the node with the given nodeId ans also load all its connected nodes
+		cypher = `MATCH (nFocus)<-[r]->(n) WHERE ID(nFocus)=${nodeId} RETURN nFocus,r,n`;
+		await executeCurrentCypher(cypher, true);
+	}
+
+	async function loadAdditionalConnections(nodeId) {
 		// load the node with the given nodeId ans also load all its connected nodes
 		cypher = `MATCH (n1)<-[r]->(n2) WHERE ID(n1)=${nodeId} RETURN n1,r,n2`;
-		executeCurrentCypher();
+		await executeCurrentCypher(cypher, false);
 	}
 
 	/* Re-execute the current cypher if the server-settings change
 	 * But only try it once every second (not on every key-stroke in teh settings-dialog).
 	 * TODO: It would be propably better to emit new server settings only if the are valid! */
-	const runQueryDebounced = debounce(() => executeCurrentCypher(), 1000);
+	const runQueryDebounced = debounce(() => executeCurrentCypher(cypher), 1000);
 	const unsubscribeSettings = serverSettings.subscribe(runQueryDebounced);
 
 	onDestroy(unsubscribeSettings);
@@ -47,11 +67,15 @@
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph bind:selectedNode on:focusChanged={focusOnNode} />
+			<Graph bind:selectedNode on:focusChanged={handleDoubleClick} />
 		</section>
 
 		<aside id="properties">
-			<Navigation bind:selectedNode />
+			<Navigation
+				bind:selectedNode
+				on:focusOnSelected={focusOnSelected}
+				on:loadConnectionsForSelectedNode={loadConnectionsForSelectedNode}
+			/>
 			<Properties bind:selectedNode />
 		</aside>
 	</div>

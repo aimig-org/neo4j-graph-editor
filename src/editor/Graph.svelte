@@ -4,11 +4,14 @@
 
 	import networkStore from '../store';
 	import { options } from './networkOption';
+	import LoadingIndicator from '../components/LoadingIndicator.svelte';
 
 	export let selectedNode;
+	export let focusNodeId;
 
 	let networkGraph;
 	let unsubscriptNetworkStore;
+	let loading = networkStore.loading;
 
 	const dispatch = createEventDispatcher();
 
@@ -56,7 +59,7 @@
 		networkGraph.on('doubleClick', params => {
 			console.log(`[Graph⚡event] "doubleClick":`, params);
 			const nodeId = params.nodes[0];
-			if (nodeId >= 0) {
+			if (nodeId >= 0 && nodeId !== focusNodeId) {
 				dispatch('focusChanged', {
 					nodeId,
 				});
@@ -134,13 +137,32 @@
 	<link rel="stylesheet" href="//unpkg.com/vis-network@9.1.2/styles/vis-network.css" />
 </svelte:head>
 
-<div id="network" />
+<div id="graph">
+	<div id="network" diabled={$loading} />
+	{#if $loading}
+		<LoadingIndicator />
+	{/if}
+</div>
 
 <style>
-	#network {
+	#graph {
+		position: relative;
 		height: 100%;
+		width: 100%;
 
 		background-color: var(--background);
 		box-shadow: inset 0 0 10px 0px rgb(0 0 0 / 10%);
+	}
+	#network {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		transition: opacity 1s, visibility 1s, filter, 1s;
+	}
+	#network[diabled='true'] {
+		opacity: 0.3;
+		pointer-events: none;
 	}
 </style>

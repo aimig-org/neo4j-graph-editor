@@ -30,6 +30,7 @@ This is the main component that creates the basic structure of the application.
 	});
 
 	onDestroy(async () => {
+		// disconnecting if the app gets closed.
 		await networkStore.disconnect();
 		settingsUnsubscribe ?? settingsUnsubscribe();
 	});
