@@ -4,11 +4,11 @@ export const options = {
 	interaction: {
 		hover: true,
 	},
-	manipulation: {
-		enabled: true,
-	},
+	// manipulation: {
+	// 	enabled: true,
+	// },
 	physics: {
-		enabled: false,
+		enabled: true,
 		barnesHut: {
 			centralGravity: 0,
 			springLength: 200,

@@ -29,7 +29,7 @@
 				<h2>Node</h2>
 			</legend>
 			<form class="properties">
-				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties'].includes(k)) as key}
+				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties', 'font'].includes(k)) as key}
 					<label for={key}>{key}</label>
 					<input type="text" id={key} name={key} value={selectedNode[key]} readonly />
 				{/each}
@@ -77,7 +77,6 @@
 
 <style>
 	#panel {
-		height: 100%;
 		background: var(--background);
 		padding: 0.5em;
 	}

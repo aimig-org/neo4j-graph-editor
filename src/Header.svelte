@@ -30,6 +30,10 @@
 		font-size: inherit;
 	}
 
+	nav {
+		display: flex;
+	}
+
 	#settingsBtn {
 		font-size: 1.75em;
 	}
