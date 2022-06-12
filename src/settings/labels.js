@@ -1,6 +1,7 @@
 /* see https://visjs.github.io/vis-network/docs/network/nodes.html for availibe options. */
 export const nodeGroupStyles = {
 	problem: {
+		level: 4,
 		font: {
 			color: 'black',
 		},
@@ -12,6 +13,7 @@ export const nodeGroupStyles = {
 		},
 	},
 	observation: {
+		level: 3,
 		font: {
 			color: 'black',
 		},
@@ -23,6 +25,7 @@ export const nodeGroupStyles = {
 		},
 	},
 	obs_instance: {
+		level: 2,
 		font: {
 			color: 'black',
 		},
@@ -33,9 +36,13 @@ export const nodeGroupStyles = {
 			hover: { background: 'white', border: 'blue' },
 		},
 	},
+	patient: {
+		level: 1,
+	},
 };
 
 export const defaultNodeStyle = {
+	level: 0,
 	font: {
 		color: 'black',
 	},

@@ -1,7 +1,8 @@
 import Neo4j from 'neo4j-driver';
 import { DataSet } from 'vis-data';
 import { nanoid } from 'nanoid';
-import { readable, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
+import { defaultNodeStyle, nodeGroupStyles } from './settings/labels';
 
 class Neo4jNetworkStore {
 	// a svelte writable store that provides the node/edge data
@@ -113,6 +114,7 @@ class Neo4jNetworkStore {
 			font: { multi: 'html' },
 			label: this.#getNodeLabel(id, label, labels, properties),
 			group: labels[0] ? labels[0].toLowerCase() : null,
+			level: this.#getLevelByLabels(labels),
 			title: label,
 			labels,
 			properties,
@@ -278,6 +280,11 @@ class Neo4jNetworkStore {
 
 	#getNodeLabel(id, label, labels, properties) {
 		return [label, labels.map(l => `<i>${l}</i>`)].join('\n');
+	}
+
+	#getLevelByLabels(labels) {
+		const label = labels[0]?.toLowerCase();
+		return nodeGroupStyles[label]?.level || defaultNodeStyle?.level || 0;
 	}
 }
 
