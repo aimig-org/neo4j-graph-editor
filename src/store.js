@@ -170,23 +170,7 @@ class Neo4jNetworkStore {
 		}
 	}
 
-	/**
-	 * @param boolean andEdges
-	 */
-	removeNode(id, andEdges) {
-		// use given id or create a new one
-		id = id || nanoid();
-
-		// check if a node with this id already exists.
-		let node = this.#nodes.get(id);
-
-		//
-
-		if (node) {
-		}
-	}
-
-	async loadNetwork(cypher) {
+	async loadNetwork(cypher, clear = true) {
 		this.loading.set(true);
 
 		if (clear) {

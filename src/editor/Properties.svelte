@@ -26,7 +26,7 @@
 	{#if selectedNode}
 		<filedset>
 			<legend>
-				<h2>Node</h2>
+				<h3>Node</h3>
 			</legend>
 			<form class="properties">
 				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties', 'font'].includes(k)) as key}
@@ -39,7 +39,7 @@
 		{#if selectedNode.labels}
 			<filedset>
 				<legend>
-					<h2>Lables</h2>
+					<h3>Lables</h3>
 				</legend>
 				<ul>
 					{#each selectedNode.labels as label}
@@ -54,7 +54,7 @@
 		{#if selectedNode.properties}
 			<filedset>
 				<legend>
-					<h2>Properties</h2>
+					<h3>Properties</h3>
 				</legend>
 				<form class="properties">
 					{#each Object.keys(selectedNode.properties).filter(k => !['id', 'name'].includes(k)) as key}

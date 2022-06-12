@@ -3,14 +3,18 @@
 	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
 	import networkStore from '../store';
-	import { options } from './networkOption';
+	import { editorState } from './editorState';
+	import { getOptions } from './networkOption';
+	import LayoutSettings from './LayoutSettings.svelte';
 	import LoadingIndicator from '../components/LoadingIndicator.svelte';
 
 	export let selectedNode;
 	export let focusNodeId;
 
 	let networkGraph;
-	let unsubscriptNetworkStore;
+	let networkOptions = {};
+	let unsubscribeNetworkStore;
+	let unsubscribeEditorState;
 	let loading = networkStore.loading;
 
 	const dispatch = createEventDispatcher();
@@ -32,7 +36,7 @@
 
 		// Subscripe to general changes to the dataStore.
 		// The dataStore changes e.g. is after a new Network is loaded.
-		unsubscriptNetworkStore = networkStore.dataStore.subscribe(networkData => {
+		unsubscribeNetworkStore = networkStore.dataStore.subscribe(networkData => {
 			console.log(`[networkStore⚡subscripe]`);
 			networkGraph.setData(networkData);
 			//networkGraph.stabilize();
@@ -113,6 +117,9 @@
 		// create a network
 		const container = document.getElementById('network');
 
+		// get initial
+		networkOptions = getOptions();
+
 		// initialize the network with the nodes/edges data from the network-store
 		networkGraph = new Network(
 			container,
@@ -120,15 +127,30 @@
 				nodes: networkStore.nodes,
 				edges: networkStore.edges,
 			},
-			options
+			networkOptions
 		);
+
+		// listen to editor-state changes
+		unsubscribeEditorState = editorState.subscribe(editorState => {
+			networkOptions = getOptions({
+				isHierarchical: editorState.layoutHierarchical,
+			});
+			networkGraph.setOptions(networkOptions);
+
+			// after updating the (layout) ioptions we also need to res-set the data
+			networkGraph.setData({
+				nodes: networkStore.nodes,
+				edges: networkStore.edges,
+			});
+		});
 
 		listenToStoreEvents();
 		listenToGraphEvents();
 	});
 
 	onDestroy(() => {
-		unsubscriptNetworkStore();
+		unsubscribeNetworkStore();
+		unsubscribeEditorState();
 	});
 </script>
 
@@ -138,7 +160,10 @@
 </svelte:head>
 
 <div id="graph">
-	<div id="network" diabled={$loading} />
+	<div id="network" disabled={$loading} />
+	<div id="layout">
+		<LayoutSettings disabled={$loading} />
+	</div>
 	{#if $loading}
 		<LoadingIndicator />
 	{/if}
@@ -164,5 +189,11 @@
 	#network[diabled='true'] {
 		opacity: 0.3;
 		pointer-events: none;
+	}
+
+	#layout {
+		position: absolute;
+		top: 0;
+		left: 0;
 	}
 </style>

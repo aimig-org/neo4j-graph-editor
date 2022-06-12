@@ -1,9 +1,12 @@
 <script>
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, onDestroy, onMount } from 'svelte';
 
+	import { editorState } from './editorState';
 	import networkStore from '../store';
 
 	export let selectedNode;
+
+	let unsubscribeEditorState;
 
 	const dispatch = createEventDispatcher();
 
@@ -45,6 +48,8 @@
 			>
 				focus on node
 			</button>
+		</li>
+		<li>
 			<button
 				id="nav_add"
 				on:click={loadConnectionsForSelectedNode}

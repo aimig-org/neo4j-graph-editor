@@ -71,11 +71,14 @@
 		</section>
 
 		<aside id="properties">
+			<h2>Node Navigation</h2>
 			<Navigation
 				bind:selectedNode
 				on:focusOnSelected={focusOnSelected}
 				on:loadConnectionsForSelectedNode={loadConnectionsForSelectedNode}
 			/>
+
+			<h2>Properties Panel</h2>
 			<Properties bind:selectedNode />
 		</aside>
 	</div>
