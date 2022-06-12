@@ -9,6 +9,7 @@
 	import LoadingIndicator from '../components/LoadingIndicator.svelte';
 
 	export let selectedNode;
+	export let selectedEdge;
 	export let focusNodeId;
 
 	let networkGraph;
@@ -48,6 +49,10 @@
 			console.log(`[Graph⚡event] "selectNode":`, params);
 			selectedNode = networkStore.nodes.get(params.nodes[0]);
 		});
+		networkGraph.on('selectEdge', params => {
+			console.log(`[Graph⚡event] "selectEdge":`, params);
+			selectedEdge = networkStore.edges.get(params.edges[0]);
+		});
 		networkGraph.on('dragStart', params => {
 			console.log(`[Graph⚡event] "dragStart":`, params);
 			/* Only set selectedNode if nodes is valid.
@@ -59,6 +64,10 @@
 		networkGraph.on('deselectNode', params => {
 			console.log(`[Graph⚡event] "deselectNode":`, params);
 			selectedNode = null;
+		});
+		networkGraph.on('deselectEdge', params => {
+			console.log(`[Graph⚡event] "deselectEdge":`, params);
+			selectedEdge = null;
 		});
 		networkGraph.on('doubleClick', params => {
 			console.log(`[Graph⚡event] "doubleClick":`, params);

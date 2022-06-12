@@ -2,6 +2,7 @@
 	import { defaultNodeStyle, nodeGroupStyles } from '../settings/labels';
 
 	export let selectedNode;
+	export let selectedEdge;
 
 	function getNeo4jValue(value) {
 		console.log(`[Properties.getNeo4jValue] value:${JSON.stringify(value)}`, value);
@@ -70,8 +71,40 @@
 				</form>
 			</filedset>
 		{/if}
+	{:else if selectedEdge}
+		<filedset>
+			<legend>
+				<h3>Edge</h3>
+			</legend>
+			<form class="properties">
+				{#each Object.keys(selectedEdge) as key}
+					<label for={key}>{key}</label>
+					<input type="text" id={key} name={key} value={selectedEdge[key]} readonly />
+				{/each}
+			</form>
+		</filedset>
+
+		{#if selectedEdge.properties}
+			<filedset>
+				<legend>
+					<h3>Properties</h3>
+				</legend>
+				<form class="properties">
+					{#each Object.keys(selectedEdge.properties) as key}
+						<label for={key}>{key}</label>
+						<input
+							type="text"
+							id={key}
+							name={key}
+							value={getNeo4jValue(selectedEdge.properties[key])}
+							readonly
+						/>
+					{/each}
+				</form>
+			</filedset>
+		{/if}
 	{:else}
-		<i>select node to show properties</i>
+		<i>select a node or edge to show properties</i>
 	{/if}
 </div>
 
@@ -80,7 +113,7 @@
 		background: var(--background);
 		padding: 0.5em;
 	}
-	#panel h2 {
+	#panel h3 {
 		margin: 0;
 		padding: 0;
 	}

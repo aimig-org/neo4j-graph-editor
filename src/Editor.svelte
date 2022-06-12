@@ -11,6 +11,7 @@
 	import networkStore from './store';
 
 	let selectedNode;
+	let selectedEdge;
 	let cypher = $appSettings.initialCypher;
 
 	// execute the current cypher
@@ -67,7 +68,7 @@
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph bind:selectedNode on:focusChanged={handleDoubleClick} />
+			<Graph bind:selectedNode bind:selectedEdge on:focusChanged={handleDoubleClick} />
 		</section>
 
 		<aside id="properties">
@@ -79,7 +80,7 @@
 			/>
 
 			<h2>Properties Panel</h2>
-			<Properties bind:selectedNode />
+			<Properties bind:selectedNode bind:selectedEdge />
 		</aside>
 	</div>
 </div>
