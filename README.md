@@ -5,7 +5,7 @@
 
 Edit [neo4j](https://neo4j.com/) databases directly using the [vis-network](https://github.com/visjs/vis-network) graph library.
 
-[🚀 DEMO](https://fllstx.github.io/neo4j-graph-editor/)
+[🚀 DEMO](https://aimig-org.github.io/neo4j-graph-editor/)
 
 ## State of development
 
