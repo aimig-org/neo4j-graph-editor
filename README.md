@@ -18,7 +18,7 @@ _This software is currently in pre-release alpha state. It is not read for prudu
 ### 💻 Run locally:
 
 ```sh
-git clone https://github.com/fllstx/neo4j-graph-editor.git
+git clone https://github.com/aimig-org/neo4j-graph-editor.git
 cd neo4j-graph-editor
 npm install
 npm run dev
