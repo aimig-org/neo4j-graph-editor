@@ -11,7 +11,7 @@ Edit [neo4j](https://neo4j.com/) databases directly using the [vis-network](http
 
 _This software is currently in pre-release alpha state. It is not read for pruductive use, yet._
 
-🔧 See our [Kanban board](https://github.com/fllstx/neo4j-graph-editor/projects/1) for details.
+🔧 See our [Kanban board](https://github.com/aimig-org/neo4j-graph-editor/projects/1) for details.
 
 ## Development
 
