@@ -5,7 +5,6 @@
 	import networkStore from '../store';
 
 	export let selectedNode;
-
 	let unsubscribeEditorState;
 
 	const dispatch = createEventDispatcher();
@@ -39,26 +38,30 @@
 	<ul id="graph_navigation">
 		<!-- <li><button on:click={createNewNode}>New Node</button></li> -->
 		<!-- <li><button on:click={deleteSelectedNode}>Delete Selected Node</button></li> -->
-		<li>
-			<button
-				id="nav_center"
-				on:click={centerOnSelectedNode}
-				disabled={!selectedNode}
-				title={navCenterTitle}
-			>
-				focus on node
-			</button>
-		</li>
-		<li>
-			<button
-				id="nav_add"
-				on:click={loadConnectionsForSelectedNode}
-				disabled={!selectedNode}
-				title={navCenterTitle}
-			>
-				load connected nodes
-			</button>
-		</li>
+		{#if selectedNode}
+			<li>
+				<button
+					id="nav_center"
+					on:click={centerOnSelectedNode}
+					disabled={!selectedNode}
+					title={navCenterTitle}
+				>
+					focus on node
+				</button>
+			</li>
+		{/if}
+		{#if selectedNode}
+			<li>
+				<button
+					id="nav_add"
+					on:click={loadConnectionsForSelectedNode}
+					disabled={!selectedNode}
+					title={navCenterTitle}
+				>
+					load connected nodes
+				</button>
+			</li>
+		{/if}
 	</ul>
 </nav>
 
@@ -67,6 +70,7 @@
 		list-style: none;
 		margin: 0rem;
 		padding: 0.25rem;
+		display: flex;
 	}
 	ul#graph_navigation li {
 		margin: 0;

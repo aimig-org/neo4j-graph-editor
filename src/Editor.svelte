@@ -4,7 +4,6 @@
 
 	import CypherInput from './editor/CypherInput.svelte';
 	import Graph from './editor/Graph.svelte';
-	import Navigation from './editor/Navigation.svelte';
 	import Properties from './editor/Properties.svelte';
 
 	import { appSettings, serverSettings } from './settings/settings';
@@ -68,20 +67,21 @@
 
 	<div class="flex-container">
 		<section id="graph">
-			<Graph bind:selectedNode bind:selectedEdge on:focusChanged={handleDoubleClick} />
-		</section>
-
-		<aside id="properties">
-			<h2>Node Navigation</h2>
-			<Navigation
+			<Graph
 				bind:selectedNode
+				bind:selectedEdge
+				on:focusChanged={handleDoubleClick}
 				on:focusOnSelected={focusOnSelected}
 				on:loadConnectionsForSelectedNode={loadConnectionsForSelectedNode}
 			/>
+		</section>
 
-			<h2>Properties Panel</h2>
-			<Properties bind:selectedNode bind:selectedEdge />
-		</aside>
+		{#if selectedNode || selectedEdge}
+			<aside id="properties">
+				<h2>Properties Panel</h2>
+				<Properties bind:selectedNode bind:selectedEdge />
+			</aside>
+		{/if}
 	</div>
 </div>
 
@@ -94,6 +94,7 @@
 	}
 
 	#editor .flex-container {
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		flex-grow: 1;
@@ -101,12 +102,19 @@
 	}
 
 	#editor .flex-container #graph {
+		position: relative;
 		flex-grow: 1;
 	}
 
 	#editor .flex-container #properties {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
 		width: 300px;
 		max-width: 300px;
+		background: var(--background);
+		box-shadow: 0 0 10px 0px rgb(0 0 0 / 10%);
 	}
 
 	@media screen and (min-width: 640px) {
