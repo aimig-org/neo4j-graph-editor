@@ -2,7 +2,9 @@ import Neo4j from 'neo4j-driver';
 import { DataSet } from 'vis-data';
 import { nanoid } from 'nanoid';
 import { writable } from 'svelte/store';
+
 import { defaultNodeStyle, nodeGroupStyles } from './settings/labels';
+import { renderHoverInfo } from './helpers/renderHoverInfos';
 
 class Neo4jNetworkStore {
 	// a svelte writable store that provides the node/edge data
@@ -109,13 +111,17 @@ class Neo4jNetworkStore {
 		// check if a node with this id already exists.
 		let node = this.#nodes.get(id);
 
+		const container = document.createElement('div');
+		container.classList.add('node-hover-info');
+		container.innerHTML = renderHoverInfo(id, label, labels, properties);
+
 		const newNode = {
 			id,
 			font: { multi: 'html' },
 			label: this.#getNodeLabel(id, label, labels, properties),
 			group: labels[0] ? labels[0].toLowerCase() : null,
 			level: this.#getLevelByLabels(labels),
-			title: label,
+			title: container,
 			labels,
 			properties,
 		};

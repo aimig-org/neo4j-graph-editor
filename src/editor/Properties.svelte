@@ -30,7 +30,7 @@
 				<h3>Node</h3>
 			</legend>
 			<form class="properties">
-				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties', 'font'].includes(k)) as key}
+				{#each Object.keys(selectedNode).filter(k => !['label', 'labels', 'properties', 'font', 'title'].includes(k)) as key}
 					<label for={key}>{key}</label>
 					<input type="text" id={key} name={key} value={selectedNode[key]} readonly />
 				{/each}
