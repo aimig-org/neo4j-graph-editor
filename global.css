@@ -107,3 +107,9 @@ div.vis-network div.vis-manipulation button.vis-button:hover {
 	box-shadow: none !important;
 	border: 1px solid var(--border) !important;
 }
+
+/********************************************
+ * Overwrite vis-network styles */
+.node-hover-info dl dt {
+	font-weight: bold;
+}
