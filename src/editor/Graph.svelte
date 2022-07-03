@@ -5,6 +5,7 @@
 	import networkStore from '../store';
 	import { editorState } from './editorState';
 	import { getOptions } from './networkOption';
+	import Navigation from './Navigation.svelte';
 	import LayoutSettings from './LayoutSettings.svelte';
 	import LoadingIndicator from '../components/LoadingIndicator.svelte';
 
@@ -12,6 +13,7 @@
 	export let selectedEdge;
 	export let focusNodeId;
 
+	let networkElement;
 	let networkGraph;
 	let networkOptions = {};
 	let unsubscribeNetworkStore;
@@ -25,14 +27,12 @@
 		// see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
 		networkStore.nodes.on('*', (event, properties) => {
 			console.log(`[nodes⚡event]: "${event}" properties:${JSON.stringify(properties)}`);
-			//networkGraph.stabilize();
 		});
 
 		// Listen to events of the edges DataSet (e.g. "add", "delete", "update")
 		// see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
 		networkStore.edges.on('*', (event, properties) => {
 			console.log(`[edges⚡event]: "${event}" properties:${JSON.stringify(properties)}`);
-			//networkGraph.stabilize();
 		});
 
 		// Subscripe to general changes to the dataStore.
@@ -40,14 +40,19 @@
 		unsubscribeNetworkStore = networkStore.dataStore.subscribe(networkData => {
 			console.log(`[networkStore⚡subscripe]`);
 			networkGraph.setData(networkData);
-			//networkGraph.stabilize();
+			if (selectedNode) {
+				const nodeId = selectedNode.id;
+				networkGraph.selectNodes([nodeId]);
+			}
 		});
 	}
 
 	function listenToGraphEvents() {
 		networkGraph.on('selectNode', params => {
 			console.log(`[Graph⚡event] "selectNode":`, params);
-			selectedNode = networkStore.nodes.get(params.nodes[0]);
+			if (params.nodes && params.nodes.length) {
+				selectedNode = networkStore.nodes.get(params.nodes[0]);
+			}
 		});
 		networkGraph.on('selectEdge', params => {
 			console.log(`[Graph⚡event] "selectEdge":`, params);
@@ -122,16 +127,28 @@
 		}
 	}
 
+	function fitNetwork() {
+		networkGraph.fit();
+	}
+
+	function focusOnSelected() {
+		dispatch('focusOnSelected');
+	}
+
+	function loadConnectionsForSelectedNode() {
+		dispatch('loadConnectionsForSelectedNode');
+	}
+
 	onMount(async () => {
 		// create a network
-		const container = document.getElementById('network');
+		networkElement = document.getElementById('network');
 
 		// get initial
 		networkOptions = getOptions();
 
 		// initialize the network with the nodes/edges data from the network-store
 		networkGraph = new Network(
-			container,
+			networkElement,
 			{
 				nodes: networkStore.nodes,
 				edges: networkStore.edges,
@@ -170,8 +187,14 @@
 
 <div id="graph">
 	<div id="network" disabled={$loading} />
-	<div id="layout">
-		<LayoutSettings disabled={$loading} />
+	<div id="navigation" disabled={$loading}>
+		<LayoutSettings on:fitNetwork={fitNetwork} />
+		<Navigation
+			disabled={$loading}
+			bind:selectedNode
+			on:focusOnSelected={focusOnSelected}
+			on:loadConnectionsForSelectedNode={loadConnectionsForSelectedNode}
+		/>
 	</div>
 	{#if $loading}
 		<LoadingIndicator />
@@ -195,14 +218,21 @@
 		bottom: 0;
 		transition: opacity 1s, visibility 1s, filter, 1s;
 	}
-	#network[diabled='true'] {
+	#network:diabled {
 		opacity: 0.3;
 		pointer-events: none;
 	}
 
-	#layout {
+	#navigation {
 		position: absolute;
-		top: 0;
+		top: 5px;
 		left: 0;
+
+		display: flex;
+		background-color: var(--background);
+	}
+	#network:diabled {
+		opacity: 0.3;
+		pointer-events: none;
 	}
 </style>
