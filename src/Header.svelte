@@ -5,7 +5,7 @@
 </script>
 
 <span id="header">
-	<h1>Neo4j Graph Editor</h1>
+	<h1>Neo4j Graph Editor - AIMIG</h1>
 	<nav>
 		<button id="settingsBtn" title="Show server settings" on:click={settingsDialog.show}>⚙</button>
 		<Settings bind:this={settingsDialog} />
