@@ -5,9 +5,13 @@
 </script>
 
 <span id="header">
-	<h1>Neo4j Graph Editor - AIMIG</h1>
+
+	<h1>Neo4j Graph Editor test 11-08-2022 </h1>
+
+	
+main
 	<nav>
-		<button id="settingsBtn" title="Show server settings" on:click={settingsDialog.show}>⚙</button>
+		<button id="settingsBtn" title="Show server settings" on:click={settingsDialog.show}>⚙ settings.</button>
 		<Settings bind:this={settingsDialog} />
 	</nav>
 </span>
