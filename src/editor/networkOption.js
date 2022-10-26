@@ -81,7 +81,7 @@ export function getOptions(settings = defaultSettings) {
 		groups: nodeGroupStyles,
 	};
 
-	// switch between auto- and hierachical layout
+	// switch between auto- and hierarchical layout
 	if (settings && settings.isHierarchical) {
 		// see https://visjs.github.io/vis-network/docs/network/layout.html
 		options.layout = {
