@@ -6,6 +6,10 @@ import { writable } from 'svelte/store';
 import { defaultNodeStyle, nodeGroupStyles } from './settings/labels';
 import { renderHoverInfo } from './helpers/renderHoverInfos';
 
+/**
+ * The Neo4jNetworkStore loads nodes and edges from the neo4j db
+ * and provides them as a svelte store to the different components.
+ */
 class Neo4jNetworkStore {
 	// a svelte writable store that provides the node/edge data
 	dataStore;
@@ -79,7 +83,7 @@ class Neo4jNetworkStore {
 
 	clear() {
 		console.log(`[Neo4jNetworkStore.clear] removing all nodes and edges.`);
-		// diable auto sync to neo4j
+		// disable auto sync to neo4j
 		this.#disableDBAutoUpdates();
 		this.#nodes.clear();
 		this.#edges.clear();
@@ -191,7 +195,7 @@ class Neo4jNetworkStore {
 			this.#neo4jSession
 				.run(cypher)
 				.then(result => {
-					/* We need to disable auto-updates TO the databese here
+					/* We need to disable auto-updates TO the database here
 					 * because the data has just been loaded FROM the database. */
 					this.#disableDBAutoUpdates();
 
@@ -220,8 +224,8 @@ class Neo4jNetworkStore {
 					alert(`Error executing cypher:\n${err}`);
 				})
 				.then(() => {
-					/* Update the data-store to inform the grap that new data has been loaded.
-					 * This is used to stabillize (physics) the network */
+					/* Update the data-store to inform the graph that new data has been loaded.
+					 * This is used to stabilize (physics) the network */
 					this.dataStore.set({
 						nodes: this.#nodes,
 						edges: this.#edges,
@@ -296,5 +300,5 @@ class Neo4jNetworkStore {
 
 const networkStore = new Neo4jNetworkStore();
 
-// return as singelton
+// return as singleton
 export default networkStore;

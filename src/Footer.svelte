@@ -5,7 +5,7 @@
 			and ❤️ by <a href="https://fullstax.de/">fullstax</a>
 		</li>
 		<li><a href="https://github.com/mojoaxel/neo4j-graph-editor">AGPL-3.0</a> licensed</li>
-		<li><a href="https://fullstax.de/impressum.html">imprint</a>, ===== test on 2022-07-15 ===</li>
+		<li><a href="https://fullstax.de/impressum.html">imprint</a></li>
 	</ul>
 </span>
 
