@@ -26,20 +26,30 @@ class Neo4jNetworkStore {
 	#neo4jDriver;
 	#neo4jSession;
 
+	/**
+	 * Creates a new Neo4jNetworkStore instance.
+	 * @constructor
+	 */
 	constructor() {
 		/* Create two vis-DataSets
 		 * one for node and one for edges (relations). */
 		this.#nodes = new DataSet([]);
 		this.#edges = new DataSet([]);
 
+		/* Creates a svelte writable store for the node/edge data. */
 		this.dataStore = writable({
 			nodes: this.#nodes,
 			edges: this.#edges,
 		});
 
+		/* Creates a simple svelte store for the loading-state */
 		this.loading = writable(true);
 	}
 
+	/**
+	 * Connect to the neo4j database using and the local server settings
+	 * ans store the session in a local member.
+	 */
 	async connect() {
 		console.log(`[Neo4jNetworkStore.connect] connecting to server:${this.#serverSettings.server}`);
 		this.#neo4jDriver = Neo4j.driver(
@@ -51,12 +61,22 @@ class Neo4jNetworkStore {
 		console.log(`[Neo4jNetworkStore.connect] new session initialized`);
 	}
 
+	/**
+	 * Close the neo4j session and driver.
+	 */
 	async disconnect() {
 		console.log(`[Neo4jNetworkStore.disconnect]`);
 		await this.#neo4jSession.close();
 		await this.#neo4jDriver.close();
 	}
 
+	/**
+	 * Validates the provides neo4j server settings
+	 * by verifying connectivity using the nea4j driver.
+	 *
+	 * @param {*} serverSettings
+	 * @returns
+	 */
 	async validateServerSettings(serverSettings) {
 		try {
 			const driver = Neo4j.driver(
@@ -71,6 +91,13 @@ class Neo4jNetworkStore {
 		}
 	}
 
+	/**
+	 * Takes a server-settings object and sets the internal server-settings,
+	 * if the settings are valid.
+	 *
+	 * @param {*} serverSettings
+	 * @returns {Boolean} true if the settings are valid, false otherwise.
+	 */
 	async setServerSettings(serverSettings = this.#serverSettings) {
 		const isValid = await this.validateServerSettings(serverSettings);
 		if (isValid) {
@@ -81,6 +108,9 @@ class Neo4jNetworkStore {
 		}
 	}
 
+	/**
+	 * Remove all nodes and edges from the internat vis-DataSets
+	 */
 	clear() {
 		console.log(`[Neo4jNetworkStore.clear] removing all nodes and edges.`);
 		// disable auto sync to neo4j
@@ -90,14 +120,30 @@ class Neo4jNetworkStore {
 		this.#enableDBAutoUpdates();
 	}
 
+	/**
+	 * Getter for the internal node vis-DataSet containing all the nodes.
+	 */
 	get nodes() {
 		return this.#nodes;
 	}
 
+	/**
+	 * Getter for the internal vis-DataSet containing all the edges.
+	 */
 	get edges() {
 		return this.#edges;
 	}
 
+	/**
+	 * Adds a node with the given properties to the network.
+	 * If a node with the given id already exists, it will be updated.
+	 * The node is added to the database, but only the internal store.
+	 *
+	 * @param {Number} id
+	 * @param {String} label
+	 * @param {String[]} labels
+	 * @param {Object | null} properties
+	 */
 	addNode(id, label, labels, properties) {
 		console.log(
 			`[Neo4jNetworkStore.addNode] ` +
@@ -145,6 +191,17 @@ class Neo4jNetworkStore {
 		}
 	}
 
+	/**
+	 * Adds a edge to the network.
+	 * If a edge with the given id already exists, it will be updated.
+	 * The edge is added to the database, but only the internal store.
+	 *
+	 * @param {Number} id
+	 * @param {String} label
+	 * @param {Number} from
+	 * @param {Number} to
+	 * @param {String} type
+	 */
 	addEdge(id, label, from, to, type) {
 		console.log(
 			`[Neo4jNetworkStore.addEdge] ` +
@@ -180,6 +237,12 @@ class Neo4jNetworkStore {
 		}
 	}
 
+	/**
+	 * Takes in a neo4j cypher statement and executes it.
+	 * After the query is executed, the result is parsed
+	 * and the nodes and edges are added to the internal stores.
+	 * If clear is true the internal node and edge store will be cleared before.
+	 */
 	async loadNetwork(cypher, clear = true) {
 		this.loading.set(true);
 
@@ -269,6 +332,14 @@ class Neo4jNetworkStore {
 		//console.timeEnd('⌚ [Neo4jNetworkStore.parseNeo4jRecords]');
 	}
 
+	/**
+	 * This function is called every time a internat vis-DataSet fires an event.
+	 *
+	 * @see https://visjs.github.io/vis-data/data/dataset.html#Callback
+	 * @param {String} event
+	 * @param {Object | null} properties
+	 * @param {String | Number} senderId
+	 */
 	#handleDataSetEvent(event, properties, senderId) {
 		// console.log(
 		// 	`[Neo4jNetworkStore.#handleDataSetEvent] event "${event}": ${JSON.stringify(properties)}`
@@ -276,22 +347,51 @@ class Neo4jNetworkStore {
 		//TODO: convert the network-change to a cypher and execute it
 	}
 
+	/**
+	 * Hooks all events of the internal vis-DataSets to the #handleDataSetEvent function.
+	 * This function should only be called once after creating the DataSets.
+	 *
+	 * @see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
+	 */
 	#enableDBAutoUpdates() {
 		console.log(`[Neo4jNetworkStore.#enableDBAutoUpdates]`);
 		this.#nodes.on('*', this.#handleDataSetEvent);
 		this.#edges.on('*', this.#handleDataSetEvent);
 	}
 
+	/**
+	 * Un-hooks all events from the internal vis-DataSets.
+	 *
+	 * @see https://visjs.github.io/vis-data/data/dataset.html#Subscriptions
+	 */
 	#disableDBAutoUpdates() {
 		console.log(`[Neo4jNetworkStore.#disableDBAutoUpdates]`);
 		this.#nodes.off('*', this.#handleDataSetEvent);
 		this.#edges.off('*', this.#handleDataSetEvent);
 	}
 
+	/**
+	 * Helper function that creates a label-string
+	 * from the given labels.
+	 *
+	 * @param {Number} id
+	 * @param {String} label
+	 * @param {String[]} labels
+	 * @param {*} properties
+	 * @returns {String}
+	 */
 	#getNodeLabel(id, label, labels, properties) {
 		return [label, labels.map(l => `<i>${l}</i>`)].join('\n');
 	}
 
+	/**
+	 * Helper function that returns a vis-hierarchy-level
+	 * based on the provides labels.
+	 * TODO: This is not ideal, because this is very domain-specific.
+	 *
+	 * @param {String[]} labels
+	 * @returns {Number} vis-hierarchy-level [0..n]
+	 */
 	#getLevelByLabels(labels) {
 		const label = labels[0]?.toLowerCase();
 		return nodeGroupStyles[label]?.level || defaultNodeStyle?.level || 0;
