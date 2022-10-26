@@ -5,8 +5,8 @@
 	import networkStore from '../store';
 	import { editorState } from './editorState';
 	import { getOptions } from './networkOption';
-	import Navigation from './Navigation.svelte';
-	import LayoutSettings from './LayoutSettings.svelte';
+	import NavigationButtons from './NavigationButtons.svelte';
+	import LayoutButtons from './LayoutButtons.svelte';
 	import LoadingIndicator from '../components/LoadingIndicator.svelte';
 
 	export let selectedNode;
@@ -188,8 +188,8 @@
 <div id="graph">
 	<div id="network" disabled={$loading} />
 	<div id="navigation" disabled={$loading}>
-		<LayoutSettings on:fitNetwork={fitNetwork} />
-		<Navigation
+		<LayoutButtons on:fitNetwork={fitNetwork} />
+		<NavigationButtons
 			disabled={$loading}
 			bind:selectedNode
 			on:focusOnSelected={focusOnSelected}

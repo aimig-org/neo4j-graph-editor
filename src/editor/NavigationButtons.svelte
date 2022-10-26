@@ -42,6 +42,7 @@
 			<li>
 				<button
 					id="nav_center"
+					class="noselect"
 					on:click={centerOnSelectedNode}
 					disabled={!selectedNode}
 					title={navCenterTitle}
@@ -54,6 +55,7 @@
 			<li>
 				<button
 					id="nav_add"
+					class="noselect"
 					on:click={loadConnectionsForSelectedNode}
 					disabled={!selectedNode}
 					title={navCenterTitle}
@@ -69,6 +71,7 @@
 	ul#graph_navigation {
 		list-style: none;
 		margin: 0rem;
+		margin-left: 1rem;
 		padding: 0.25rem;
 		display: flex;
 	}
