@@ -18,10 +18,10 @@ export const nodeGroupStyles = {
 			color: 'black',
 		},
 		color: {
-			border: 'orange',
+			border: 'green',
 			background: 'white',
-			highlight: { background: 'white', border: 'orange' },
-			hover: { background: 'white', border: 'orange' },
+			highlight: { background: 'white', border: 'green' },
+			hover: { background: 'white', border: 'green' },
 		},
 	},
 	obs_instance: {
